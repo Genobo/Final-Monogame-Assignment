@@ -8,6 +8,9 @@ namespace Final_Monogame_Assignment
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        Texture2D duckTexture;
+        Rectangle duckRect;
+        Vector2 duckSpeed;
 
         public Game1()
         {
@@ -21,11 +24,14 @@ namespace Final_Monogame_Assignment
             // TODO: Add your initialization logic here
 
             base.Initialize();
+            duckRect = new Rectangle(300, 10, 100, 100);
+            duckSpeed = new Vector2(2, 2);
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+            duckTexture = Content.Load<Texture2D>("rubberDuck");
 
             // TODO: use this.Content to load your game content here
         }
