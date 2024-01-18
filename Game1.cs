@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace Final_Monogame_Assignment
 {
@@ -11,7 +12,8 @@ namespace Final_Monogame_Assignment
         Texture2D duckTexture;
         Rectangle duckRect;
         Vector2 duckSpeed;
-        MouseState mouseState;
+        MouseState mouseState = Mouse.GetState();
+        MouseState oldState;
         enum Screen
         {
             Intro,
@@ -22,7 +24,8 @@ namespace Final_Monogame_Assignment
         Texture2D scopeTexture;
         Rectangle scopeLocation;
         Texture2D fieldTexture;
-        KeyboardState keyboardState;
+        SpriteFont font;
+        int score;
 
         public Game1()
         {
@@ -39,6 +42,7 @@ namespace Final_Monogame_Assignment
             duckRect = new Rectangle(300, 10, 100, 100);
             duckSpeed = new Vector2(4, 5);
             scopeLocation = new Rectangle(10, 10, 75, 75);
+            score = 0;
             screen = Screen.Intro;
         }
 
@@ -49,6 +53,7 @@ namespace Final_Monogame_Assignment
             duckIntroTexture = Content.Load<Texture2D>("Duck_Hunt");
             scopeTexture = Content.Load<Texture2D>("reticle2");
             fieldTexture = Content.Load<Texture2D>("duck-hunt-11");
+            font = Content.Load<SpriteFont>("Score");
 
             // TODO: use this.Content to load your game content here
         }
@@ -61,25 +66,48 @@ namespace Final_Monogame_Assignment
             // TODO: Add your update logic here
 
             base.Update(gameTime);
-            keyboardState = Keyboard.GetState();
+            oldState = mouseState;
+            MouseState newState = Mouse.GetState();
             mouseState = Mouse.GetState();
+            
+            
+
             if (screen == Screen.Intro)
             {
                 if (mouseState.LeftButton == ButtonState.Pressed)
                 {
                     screen = Screen.RubberDuck;
+                    IsMouseVisible = false;
                 }
             }
-            duckRect.X += (int)duckSpeed.X;
-            duckRect.Y += (int)duckSpeed.Y;
-            if (duckRect.Right > _graphics.PreferredBackBufferWidth || duckRect.Left < 0)
+            else if (screen == Screen.RubberDuck) 
             {
-                duckSpeed.X *= -1;
+                scopeLocation.X = mouseState.X;
+                scopeLocation.Y = mouseState.Y;
+
+                duckRect.X += (int)duckSpeed.X;
+                duckRect.Y += (int)duckSpeed.Y;
+                if (duckRect.Right > _graphics.PreferredBackBufferWidth || duckRect.Left < 0)
+                {
+                    duckSpeed.X *= -1;
+                }
+                if (duckRect.Bottom > _graphics.PreferredBackBufferHeight || duckRect.Top < 0)
+                {
+                    duckSpeed.Y *= -1;
+                }
+
+                if (duckRect.Contains(mouseState.Position))
+                {
+                    if (newState.LeftButton == ButtonState.Pressed && oldState.LeftButton == ButtonState.Released)
+                    {
+                        score++;
+                    }
+
+                }
+
+
             }
-            if (duckRect.Bottom > _graphics.PreferredBackBufferHeight || duckRect.Top < 0)
-            {
-                duckSpeed.Y *= -1;
-            }
+            
         }
 
         protected override void Draw(GameTime gameTime)
@@ -98,7 +126,8 @@ namespace Final_Monogame_Assignment
             {
                 _spriteBatch.Draw(fieldTexture, new Rectangle(0, 0, 800, 500), Color.White);
                 _spriteBatch.Draw(duckTexture, duckRect, Color.White);
-                _spriteBatch.Draw(scopeTexture, new Rectangle(300, 10, 100, 100), Color.White);
+                _spriteBatch.Draw(scopeTexture, scopeLocation, Color.White);
+                _spriteBatch.DrawString(font, "Score: " + score, new Vector2(700, 50), Color.Black);
             }
             _spriteBatch.End();
         }
