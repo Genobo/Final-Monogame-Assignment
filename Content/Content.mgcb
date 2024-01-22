@@ -37,6 +37,12 @@
 /processorParam:TextureFormat=Color
 /build:duck-hunt-11.jpg
 
+#begin duckhunt.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:duckhunt.wav
+
 #begin reticle2.png
 /importer:TextureImporter
 /processor:TextureProcessor
