@@ -27,6 +27,8 @@ namespace Final_Monogame_Assignment
         Texture2D fieldTexture;
         SpriteFont font;
         SoundEffectInstance hunting;
+        SoundEffectInstance blaster;
+        Random generator;
         int score;
 
         public Game1()
@@ -45,6 +47,7 @@ namespace Final_Monogame_Assignment
             duckSpeed = new Vector2(6, 5);
             scopeLocation = new Rectangle(10, 10, 75, 75);
             score = 0;
+            generator = new Random();
             screen = Screen.Intro;
         }
 
@@ -56,6 +59,7 @@ namespace Final_Monogame_Assignment
             scopeTexture = Content.Load<Texture2D>("reticle2");
             fieldTexture = Content.Load<Texture2D>("duck-hunt-11");
             hunting = Content.Load<SoundEffect>("duckhunt").CreateInstance();
+            blaster = Content.Load<SoundEffect>("zapper").CreateInstance();
             font = Content.Load<SpriteFont>("Score");
 
             // TODO: use this.Content to load your game content here
@@ -72,8 +76,8 @@ namespace Final_Monogame_Assignment
             oldState = mouseState;
             MouseState newState = Mouse.GetState();
             mouseState = Mouse.GetState();
-            
-            
+
+
 
             if (screen == Screen.Intro)
             {
@@ -84,7 +88,7 @@ namespace Final_Monogame_Assignment
                     IsMouseVisible = false;
                 }
             }
-            else if (screen == Screen.RubberDuck) 
+            else if (screen == Screen.RubberDuck)
             {
                 hunting.Stop();
                 scopeLocation.X = mouseState.X;
@@ -101,19 +105,40 @@ namespace Final_Monogame_Assignment
                     duckSpeed.Y *= -1;
                 }
 
-                if (duckRect.Contains(mouseState.Position))
+
+                if (newState.LeftButton == ButtonState.Pressed && oldState.LeftButton == ButtonState.Released)
                 {
-                    if (newState.LeftButton == ButtonState.Pressed && oldState.LeftButton == ButtonState.Released)
+                    blaster.Play();
+
+                    if (duckRect.Contains(mouseState.Position))
                     {
                         score++;
-                        duckRect.Location = new Point(300, 200);
+                        duckRect.Location = new Point(generator.Next(0,300),generator.Next(20,300));
+                        if (duckSpeed.X > 0)
+                        {
+                            duckSpeed.X += 0.5f;
+                        }
+                        else
+                        {
+                            duckSpeed.X -= 0.5f;
+                        }
+                        if (duckSpeed.Y > 0)
+                        {
+                            duckSpeed.Y += 0.5f;
+                        }
+                        else
+                        {
+                            duckSpeed.Y -= 0.5f;
+                        }
                     }
 
                 }
 
 
+
+
             }
-            
+
         }
 
         protected override void Draw(GameTime gameTime)

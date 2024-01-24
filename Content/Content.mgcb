@@ -86,3 +86,9 @@
 /processorParam:TextureFormat=Compressed
 /build:Score.spritefont
 
+#begin zapper.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:zapper.wav
+
